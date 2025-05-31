@@ -5,6 +5,7 @@ import csv
 import json as js
 from datetime import date, datetime
 from fastavro import writer as avro_writer
+import pyarrow as pa
 
 config = {
     "user": environ['DATABASE_USERNAME'],
@@ -113,20 +114,47 @@ class DataBaseConnection:
         schema = {
             "doc": "Sales",
             "name": "Sales",
-            "namespace": "UN.VENTAS",
+            "namespace": "UN",
             "type": "record",
             "fields": [
-                {"name": col, "type": "string"} for col in columns
+                {"name": col, "type": _type} for col, _type in zip(columns,
+                ["string", "string", "int", "int", "int", "int", "float", "float", "string"])
             ]
         }
         rows = [to_avro_safe(dict(zip(columns, row))) for row in self.data]
-        with open("data files/ventas.avro", "wb") as out:
+        with open(path, "wb") as out:
             avro_writer(out, schema, rows)
+    def data_to_parquet(self, path):
+        """
+        Converts data to Parquet format and saves it to the designated path.
+
+        :param path: Path where the Parquet file will be saved.
+        :return: None.
+        """
+        def to_serializable(val):
+            if isinstance(val, (date, datetime)):
+                return val.isoformat()
+            return val
+        
+        df = pd.DataFrame([{k: to_serializable(v) for k, v in zip(columns, row)} for row in self.data])
+        df.to_parquet(path, engine="pyarrow", index=False)
         
 
 db_connection = DataBaseConnection()
+import time as t
+
+time = t.time()
 db_connection.data_to_csv('data files/data.csv')
+print(f"CSV conversion took {t.time() - time} seconds")
+time = t.time()
 db_connection.data_to_json('data files/data.json')
+print(f"JSON conversion took {t.time() - time} seconds")
+time = t.time()
+db_connection.data_to_avro('data files/data.avro')
+print(f"Avro conversion took {t.time() - time} seconds")
+time = t.time()
+db_connection.data_to_parquet('data files/data.parquet')
+print(f"Parquet conversion took {t.time() - time} seconds")
 
 df = pd.DataFrame(db_connection.data, columns=columns)
 

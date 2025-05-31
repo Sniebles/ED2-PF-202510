@@ -1,6 +1,7 @@
 import socket
 import threading
 
+shutdown = False
 
 class ClientThread(threading.Thread):
     def __init__(self, clientAddress, clientsocket):
@@ -16,20 +17,25 @@ class ClientThread(threading.Thread):
             msg = data.decode()
             if msg == 'bye':
                 break
+            if msg == 'shutdown':
+                print("Shutting down server")
+                global shutdown
+                shutdown = True
+                break
             print("from client", msg)
             self.csocket.send(bytes(msg, 'UTF-8'))
         print("Client at ", clientAddress, " disconnected")
 
 
-LOCALHOST = "192.168.1.4"
+LOCALHOST = "192.168.1.9"
 PORT = 8080
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server.bind((LOCALHOST, PORT))
 print("Server started")
 print("Waiting for client request..")
-while True:
-    server.listen(3)
+while not shutdown:
+    server.listen(4)
     clientsock, clientAddress = server.accept()
     newthread = ClientThread(clientAddress, clientsock)
     newthread.start()
