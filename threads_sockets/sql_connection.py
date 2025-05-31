@@ -6,6 +6,7 @@ import json as js
 from datetime import date, datetime
 from fastavro import writer as avro_writer
 import pyarrow as pa
+import os
 
 config = {
     "user": environ['DATABASE_USERNAME'],
@@ -17,6 +18,17 @@ config = {
 
 columns=['ID_VENTA', 'FECHA_VENTA', 'ID_CLIENTE', 'ID_EMPLEADO',
                   'ID_PRODUCTO', 'CANTIDAD', 'PRECIO_UNITARIO', 'DESCUENTO', 'FORMA_PAGO']
+
+def make_folder(path):
+    """
+    This function checks if the directory exists, and if not, it creates the necessary directories.
+    
+    :param path: The path where the directory should be created.
+    :return: None
+    """
+    folder = os.path.dirname(path)
+    if folder and not os.path.exists(folder):
+        os.makedirs(folder)
 
 class DataBaseConnection:
     """ A class to handle the connection to a MySQL database
@@ -59,7 +71,7 @@ class DataBaseConnection:
 
         cnx = get_connection()
 
-        print("Connection with Data Base established")
+        print("Connection established with Data Base")
 
         self.data = get_data(cnx, "SELECT * FROM UN.VENTAS")
 
@@ -70,6 +82,7 @@ class DataBaseConnection:
         :param path: Path where the Avro file will be saved.
         :return: None.
         """
+        make_folder(path)
         with open(path, mode='w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow(columns)
@@ -81,6 +94,7 @@ class DataBaseConnection:
         :param path: Path where the Avro file will be saved.
         :return: None.
         """
+        make_folder(path)
         def make_json_safe(row_dict):
             safe = {}
             for k, v in row_dict.items():
@@ -103,6 +117,7 @@ class DataBaseConnection:
         :param path: Path where the Avro file will be saved.
         :return: None.
         """
+        make_folder(path)
         def to_avro_safe(row_dict):
             safe = {}
             for k, v in row_dict.items():
@@ -131,6 +146,8 @@ class DataBaseConnection:
         :param path: Path where the Parquet file will be saved.
         :return: None.
         """
+        make_folder(path)
+
         def to_serializable(val):
             if isinstance(val, (date, datetime)):
                 return val.isoformat()

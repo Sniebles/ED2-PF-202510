@@ -13,12 +13,24 @@ if __name__ == '__main__':
     t.test()
     print("\nAll sort methods completed successfully.")
     print("Threading tests completed successfully.\n")
-
+    
     print("Starting server and clients: (CubeSort, Quicksort, Mergesort, Heapsort)...\n-------------------------------\n")
     
-    th.Thread(target=s.start_server).start()
+    server_th = th.Thread(target=s.start_server)
+    clients_th = []
     for _ in range(4):
-        th.Thread(target=c.run_client()).start()
+        clients_th.append(th.Thread(target=c.run_client))
+    
+    server_th.start()
+
+    s.server_started.wait()
+
+    for client in clients_th:
+        client.start()
+
+    server_th.join()
+    for client in clients_th:
+        client.join()
     print("\nAll sort methods completed successfully.")
     print("Server and clients started successfully.\n")
 

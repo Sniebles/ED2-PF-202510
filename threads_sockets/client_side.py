@@ -13,16 +13,16 @@ def run_client():
     method on a predefined dataset, measuring the time taken for the sort.
     """
 
-    SERVER = "192.168.1.9"
+    #SERVER = "192.168.1.9"
     PORT = 8080
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((SERVER, PORT))
+    client.connect(('localhost', PORT))
     client.sendall(bytes("Waiting for server response...", 'UTF-8'))
 
     data = ""
     response = client.recv(2048)
     data = response.decode()
-    print("client side:\n----Received from server:", data)
+    print("client side:----Received from server:", data)
 
     func = cs.cube_sort
     if data.lower() == "quicksort":
