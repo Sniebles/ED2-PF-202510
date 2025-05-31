@@ -1,32 +1,26 @@
-import random
-import threading
-import time
-
-
-class Working_Thread(threading.Thread):
-    def __init__(self, name):
-        threading.Thread.__init__(self)
-        self.name = name
-        self.id = id(self)
-
-    def run(self):
-        """
-        Run the thread
-        """
-        worker(self.name, self.id)
-
-
-def worker(name: str, instance_id: int) -> None:
-    print(f'Started worker {name} - {instance_id}')
-    worker_time = random.choice(range(1, 10))
-    time.sleep(worker_time)
-    print("the result is", instance_id*2)
-    print(f'{name} - {instance_id} worker finished in '
-          f'{worker_time} seconds')
-
+import sql_connection as sc
+from sort_methods import test as t
+import client_side as c
+import server_side as s
+import threading as th
 
 if __name__ == '__main__':
-    for i in range(1000):
-        thread = Working_Thread(name=f'computer_{i}')
-        thread.start()
-    thread.join()
+    print("Saving data to files...\n-------------------------------\n")
+    sc.save_data_to_files()
+    print("\nData saved to files successfully.\n")
+
+    print("Running threading tests with: (CubeSort, Quicksort, Mergesort, Heapsort)\n-------------------------------\n")
+    t.test()
+    print("\nAll sort methods completed successfully.")
+    print("Threading tests completed successfully.\n")
+
+    print("Starting server and clients: (CubeSort, Quicksort, Mergesort, Heapsort)...\n-------------------------------\n")
+    
+    th.Thread(target=s.start_server).start()
+    for _ in range(4):
+        th.Thread(target=c.run_client()).start()
+    print("\nAll sort methods completed successfully.")
+    print("Server and clients started successfully.\n")
+
+    print("All tests completed successfully.\n")
+    print("End of threading and sockets tests.\n")

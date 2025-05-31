@@ -59,7 +59,7 @@ class DataBaseConnection:
 
         cnx = get_connection()
 
-        print("Connection established")
+        print("Connection with Data Base established")
 
         self.data = get_data(cnx, "SELECT * FROM UN.VENTAS")
 
@@ -139,23 +139,28 @@ class DataBaseConnection:
         df = pd.DataFrame([{k: to_serializable(v) for k, v in zip(columns, row)} for row in self.data])
         df.to_parquet(path, engine="pyarrow", index=False)
         
+def save_data_to_files():
+    """
+    Saves data from the database to CSV, JSON, Avro, and Parquet files.
+    This function creates a DataBaseConnection instance, retrieves data from the database,
+    and saves it in the specified formats.
+    It measures the time taken for each conversion and prints it to the console.
+    The data base is then printed.
+    """
+    db_connection = DataBaseConnection()
+    import time as t
 
-db_connection = DataBaseConnection()
-import time as t
-
-time = t.time()
-db_connection.data_to_csv('data files/data.csv')
-print(f"CSV conversion took {t.time() - time} seconds")
-time = t.time()
-db_connection.data_to_json('data files/data.json')
-print(f"JSON conversion took {t.time() - time} seconds")
-time = t.time()
-db_connection.data_to_avro('data files/data.avro')
-print(f"Avro conversion took {t.time() - time} seconds")
-time = t.time()
-db_connection.data_to_parquet('data files/data.parquet')
-print(f"Parquet conversion took {t.time() - time} seconds")
-
-df = pd.DataFrame(db_connection.data, columns=columns)
-
-print(df)
+    print ("Saving data to files...")
+    print("Converting data to CSV, JSON, Avro, and Parquet formats...\n")
+    time = t.time()
+    db_connection.data_to_csv('data files/data.csv')
+    print(f"CSV conversion took {t.time() - time} seconds")
+    time = t.time()
+    db_connection.data_to_json('data files/data.json')
+    print(f"JSON conversion took {t.time() - time} seconds")
+    time = t.time()
+    db_connection.data_to_avro('data files/data.avro')
+    print(f"Avro conversion took {t.time() - time} seconds")
+    time = t.time()
+    db_connection.data_to_parquet('data files/data.parquet')
+    print(f"Parquet conversion took {t.time() - time} seconds")
