@@ -32,7 +32,7 @@ if __name__ == '__main__':
     for client in clients_th:
         client.join()
     print("\nAll sort methods completed successfully.")
-    print("Server and clients started successfully.\n")
+    print("Server and clients completed successfully.\n")
 
     print("All tests completed successfully.\n")
     print("End of threading and sockets tests.\n")

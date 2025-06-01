@@ -79,7 +79,7 @@ class DataBaseConnection:
         """
         Converts the data from the Data Base to CSV format and saves it to the designated path.
 
-        :param path: Path where the Avro file will be saved.
+        :param path: Path where the CSV file will be saved.
         :return: None.
         """
         make_folder(path)
@@ -91,7 +91,7 @@ class DataBaseConnection:
         """
         Converts data to JSON format and saves it to the designated path.
 
-        :param path: Path where the Avro file will be saved.
+        :param path: Path where the JSON file will be saved.
         :return: None.
         """
         make_folder(path)

@@ -30,11 +30,11 @@ class ClientThread(threading.Thread):
         msg = data.decode()
         print("server side:--------------------------from client:", msg)
 
-        c = count
-
-        self.csocket.send(bytes(sortMethods[c], 'UTF-8'))
         with count_lock:
+            c = count
             count += 1
+            
+        self.csocket.send(bytes(sortMethods[c], 'UTF-8'))
 
         def recv_exact(sock, n):
             data = b''
@@ -64,19 +64,19 @@ def start_server():
     server.bind(('localhost', PORT))
     server_started.set()
     print("server side:--------------------------Server started")
-    print("server side:--------------------------Waiting for client request..")
+    print("server side:--------------------------Waiting for client requests..")
     global clients_count
     threads = []
+    server.listen(len(sortMethods))
     while clients_count < len(sortMethods):
-        server.listen(len(sortMethods))
         clientsock, clientAddress = server.accept()
         clients_count += 1
         newthread = ClientThread(clientAddress, clientsock)
         threads.append(newthread)
         newthread.start()
+        print("server side:--------------------------", clients_count, "sort methods sent so far.")
         if clients_count == len(sortMethods):
             print("server side:--------------------------All sort methods have been sent.")
-        print("server side:--------------------------", count, "sort methods sent so far.")
     for t in threads:
         t.join()
     print("server side:--------------------------Server shutting down.")
