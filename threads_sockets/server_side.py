@@ -1,24 +1,31 @@
 import socket
 import threading
 import struct
-
+import os
+import csv
+from sql_connection import make_folder
 sortMethods = ['CubeSort','QuickSort', 'MergeSort', 'HeapSort']
 count = 0
 count_lock = threading.Lock()
 clients_count = 0
 sortingTimes = {
-    'CubeSort': 0.0,
-    'QuickSort': 0.0,
-    'MergeSort': 0.0,
-    'HeapSort': 0.0
+    'CubeSort': [],
+    'QuickSort': [],
+    'MergeSort': [],
+    'HeapSort': []
 }
+outputHeader = ["Algorithm", "Runtime"]
+
+
 server_started = threading.Event()
 
 class ClientThread(threading.Thread):
-    def __init__(self, clientAddress, clientsocket):
+    def __init__(self, clientAddress, clientsocket, MAX_RUNS=1):
         threading.Thread.__init__(self)
         self.clientAddress = clientAddress
         self.csocket = clientsocket
+        self.MAX_RUNS = MAX_RUNS
+        self.runs = 0
         print("server side:--------------------------New connection added: ", clientAddress)
 
     def run(self):
@@ -35,7 +42,6 @@ class ClientThread(threading.Thread):
             count += 1
             
         self.csocket.send(bytes(sortMethods[c], 'UTF-8'))
-
         def recv_exact(sock, n):
             data = b''
             while len(data) < n:
@@ -44,19 +50,30 @@ class ClientThread(threading.Thread):
                     raise ConnectionError("Conexión cerrada antes de recibir todos los datos")
                 data += more
             return data
-
-        time = 0.0
-        data = recv_exact(self.csocket, 4)
-        time = struct.unpack('f', data)[0]
         
-        print("server side:--------------------------Time taken by ", sortMethods[c], " is ", time, " seconds")
+        while self.runs < self.MAX_RUNS:
+            time = 0.0
+            data = recv_exact(self.csocket, 4)
+            time = struct.unpack('f', data)[0]
 
-        sortingTimes[sortMethods[c]] = time
+            print("server side:--------------------------Time taken by ", sortMethods[c], " is ", time, " seconds")
+
+            sortingTimes[sortMethods[c]].append(time)
+            self.runs += 1
 
         print("server side:--------------------------Client at ", self.clientAddress, " disconnected")
+        
+        base_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+        filename = os.path.join(base_directory, "data files", "results", f"{sortMethods[c]}.csv")
+        make_folder(filename)
+        with open(filename, "w", newline="") as out:
+            writer = csv.writer(out)
+            writer.writerow(outputHeader)
+            for t in sortingTimes[sortMethods[c]]:
+                writer.writerow([sortMethods[c], t])
 
 
-def start_server():
+def start_server(MAX_RUNS=1):
     #LOCALHOST = "192.168.1.9"
     PORT = 8080
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -71,7 +88,7 @@ def start_server():
     while clients_count < len(sortMethods):
         clientsock, clientAddress = server.accept()
         clients_count += 1
-        newthread = ClientThread(clientAddress, clientsock)
+        newthread = ClientThread(clientAddress, clientsock, MAX_RUNS)
         threads.append(newthread)
         newthread.start()
         print("server side:--------------------------", clients_count, "sort methods sent so far.")
