@@ -10,8 +10,12 @@ import sort_methods.mergesort as ms
 import sort_methods.heapsort as hs
 
 # Execute & record time
-def run_and_time(name, func, data, key, returnedTime=None, save_route=None, random_seed=None):
-    arr = copy.deepcopy(data)
+def run_and_time(name, func, data, key, returnedTime=None, save_route=None, random_seed=None, shouldCopy=True):
+    if shouldCopy:
+        arr = copy.deepcopy(data)
+    else:
+        arr = data
+        
     if random_seed:
         random.seed(random_seed)
         random.shuffle(arr)

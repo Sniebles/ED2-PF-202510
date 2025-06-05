@@ -4,7 +4,7 @@ import client_side as c
 import server_side as s
 import threading as th
 
-MAX_RUNS = 2
+MAX_RUNS = 1
 if __name__ == '__main__':
     print("Saving data to files...\n-------------------------------\n")
     # sc.save_data_to_files()
