@@ -7,11 +7,11 @@ import threading as th
 MAX_RUNS = 1
 if __name__ == '__main__':
     print("Saving data to files...\n-------------------------------\n")
-    # sc.save_data_to_files()
+    sc.save_data_to_files()
     print("\nData saved to files successfully.\n")
 
     # print("Running threading tests with: (CubeSort, Quicksort, Mergesort, Heapsort)\n-------------------------------\n")
-    t.test()
+    # t.test()
     print("\nAll sort methods completed successfully.")
     # print("Threading tests completed successfully.\n")
     
