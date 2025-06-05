@@ -13,7 +13,16 @@ def heapsort(data: list, key: str):
         data[i], data[0] = data[0], data[i]
         heapify(data, i, 0, key)
 
-def heapify(data, heap_size, root_index, key):
+def heapify(data: list, heap_size: int, root_index: int, key: str):
+    """
+    Creates a max heap assuming the provided array is mostly already sorted, only checking the provided index
+    and recursing on the child it gets swapped with if out of place.
+    Parameters:
+        data (list): Dictionary list to build max heap from
+        heap_size (int): Size of the list
+        root_index (int): List index of the root
+        key (str): Key to sort dictionaries by
+    """
     largest = root_index
     left = 2 * root_index + 1
     right = 2 * root_index + 2
