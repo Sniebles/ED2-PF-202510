@@ -34,7 +34,8 @@ def run_algorithm(alg_name: str, MAX_RUNS:int=1, seed_offset:int=0, sub_ind:int=
         alg_name (str): Algorithm name
         MAX_RUNS (int, optional): How many times to run and time the algorithm
         seed_offset (int, optional): Data shuffling seed offset
-        sub_ind (int, optional): If present, sub index of file to write results to
+        sub_ind (int, optional): If present, added to name of file results are written to, this allows using the same algorithm
+            in multiple processes without having to worry about synchronization when writing results.
     """
     func = sortingFunction[alg_name]
     runs = 0
