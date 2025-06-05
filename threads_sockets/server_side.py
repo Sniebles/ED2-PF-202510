@@ -20,7 +20,19 @@ outputHeader = ["Algorithm", "Runtime"]
 server_started = threading.Event()
 
 class ClientThread(threading.Thread):
-    def __init__(self, clientAddress, clientsocket, MAX_RUNS=1):
+    """
+    A class that handles communication to and from a client socket. Assigns client socket an
+    algorithm and waits for it to report its recorded runtime before writing it to a file.
+    """
+    def __init__(self, clientAddress, clientsocket: socket.socket, MAX_RUNS:int=1):
+        """
+        Parameters:
+            clientAddress:
+            clientsocket:
+            MAX_RUNS (int, optional): Number of times to wait for a runtime response before writing to file
+        Returns:
+            None
+        """
         threading.Thread.__init__(self)
         self.clientAddress = clientAddress
         self.csocket = clientsocket
@@ -73,7 +85,12 @@ class ClientThread(threading.Thread):
                 writer.writerow([sortMethods[c], t])
 
 
-def start_server(MAX_RUNS=1):
+def start_server(MAX_RUNS:int=1):
+    """
+    Starts server socket and listens for connections from clients to create a handling thread.
+    Parameters:
+        MAX_RUNS (int, optional): Number of times to wait for a runtime response in each handling thread.
+    """
     #LOCALHOST = "192.168.1.9"
     PORT = 8080
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -27,50 +27,47 @@ sortingFunction = {
 outputHeader = ["Algorithm", "Runtime"]
 
 
-def run_algorithm(alg_name: str, MAX_RUNS=1, seed_offset=0, sub_ind=None):
-    table = tst.rr.read_csv("data files/data.csv")
+def run_algorithm(alg_name: str, MAX_RUNS:int=1, seed_offset:int=0, sub_ind:int=None):
+    """
+    Reads input table from a fixed location, runs the specified algorithm and records its runtime to a file
+    Parameters:
+        alg_name (str): Algorithm name
+        MAX_RUNS (int, optional): How many times to run and time the algorithm
+        seed_offset (int, optional): Data shuffling seed offset
+        sub_ind (int, optional): If present, sub index of file to write results to
+    """
     func = sortingFunction[alg_name]
     runs = 0
     while (runs < MAX_RUNS):
+        table = tst.rr.read_csv("data files/data.csv")
         recorded_time = [0.0]
         print(f'{runs+seed_offset}-{alg_name} about to start')
         tst.run_and_time(alg_name, func, table, "CANTIDAD", returnedTime=recorded_time,random_seed=runs+seed_offset,shouldCopy=False)
-        if sub_ind is None:
-            sortingTimes[alg_name].append(recorded_time[0])
-        else:
-            sortingTimes[alg_name][sub_ind].append(recorded_time[0])
-            
+        sortingTimes[alg_name].append(recorded_time[0])            
             
         runs += 1
     
     base_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
     if sub_ind is None:
         filename = os.path.join(base_directory, "data files", "results2", f"{alg_name}.csv")    
-        make_folder(filename)
-        with open(filename, "w", newline="") as out:
-            writer = csv.writer(out)
-            writer.writerow(outputHeader)
-            for t in sortingTimes[alg_name]:
-                writer.writerow([alg_name, t])
     else:
         filename = os.path.join(base_directory, "data files", "results2", f"{alg_name}-{sub_ind}.csv")    
-        make_folder(filename)
-        with open(filename, "w", newline="") as out:
-            writer = csv.writer(out)
-            writer.writerow(outputHeader)
-            for t in sortingTimes[alg_name][sub_ind]:
-                writer.writerow([alg_name, t])
-
+    make_folder(filename)
+    with open(filename, "w", newline="") as out:
+        writer = csv.writer(out)
+        writer.writerow(outputHeader)
+        for t in sortingTimes[alg_name]:
+            writer.writerow([alg_name, t])
 
 
 if __name__ == "__main__":
     print("Program Started")
     pool = Pool(processes=4)
     start = time.time()
-    r1 = pool.apply_async(run_algorithm, ["CubeSort", 3,])
-    r2 = pool.apply_async(run_algorithm, ["QuickSort", 3,])
-    r3 = pool.apply_async(run_algorithm, ["MergeSort", 3,])
-    r4 = pool.apply_async(run_algorithm, ["HeapSort", 3,])
+    r1 = pool.apply_async(run_algorithm, ["MergeSort", 25,0,0])
+    r2 = pool.apply_async(run_algorithm, ["MergeSort", 25,25,1])
+    r3 = pool.apply_async(run_algorithm, ["MergeSort", 25,50,2])
+    r4 = pool.apply_async(run_algorithm, ["MergeSort", 25,75,3])
     
     pool.close()
     pool.join()

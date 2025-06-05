@@ -8,9 +8,22 @@ import sort_methods.cubesort as cs
 import sort_methods.quicksort as qs
 import sort_methods.mergesort as ms
 import sort_methods.heapsort as hs
-
+from typing import Callable
 # Execute & record time
-def run_and_time(name, func, data, key, returnedTime=None, save_route=None, random_seed=None, shouldCopy=True):
+def run_and_time(name : str, func: Callable[[list, str], None], data:list, key:str, returnedTime:list=None, save_route:str=None, random_seed:int=None, shouldCopy:bool=True):
+    """
+    Parameters:
+        -name (str): Algorithm name
+        -func (Callable[[list, str], None]): Algorithm function reference
+        -data (list): Database table to sort
+        -key (str): Key to sort dictionary data by
+        -returnedTime (list, optional): Single entry list to return algorithm runtime
+        -save_route (str, optional): Filepath to save sorted list
+        -random_seed (int, optional): Seed to shuffle data
+        -shouldCopy (bool, optional): Whether a deepcopy should be made
+    Returns:
+        None
+    """
     if shouldCopy:
         arr = copy.deepcopy(data)
     else:
@@ -35,6 +48,10 @@ def run_and_time(name, func, data, key, returnedTime=None, save_route=None, rand
 
 
 def test():
+    """
+    Runs and times all 4 sorting algorithms in separate threads with input data read from ./data files/data.csv
+    and writes the ordered lists to ./data files/data_sorted_{algorithm}.csv
+    """
     base_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
     entry_route = os.path.join(base_directory, "data files", "data.csv")
     exit_routes = [

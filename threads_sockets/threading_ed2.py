@@ -11,8 +11,8 @@ if __name__ == '__main__':
     print("\nData saved to files successfully.\n")
 
     # print("Running threading tests with: (CubeSort, Quicksort, Mergesort, Heapsort)\n-------------------------------\n")
-    # t.test()
-    # print("\nAll sort methods completed successfully.")
+    t.test()
+    print("\nAll sort methods completed successfully.")
     # print("Threading tests completed successfully.\n")
     
     print("Starting server and clients: (CubeSort, Quicksort, Mergesort, Heapsort)...\n-------------------------------\n")

@@ -8,10 +8,16 @@ from sort_methods import cubesort as cs
 from sort_methods import mergesort as ms
 from sort_methods import heapsort as hs
 
-def run_client(table, MAX_RUNS=1):
+def run_client(table: list, MAX_RUNS:int=1):
     """Connects to the server, requests a sorting method, and sends back the time taken for sorting.
     The server will respond with the sorting method to use, and the client will execute the sorting
     method MAX_RUNS times on a shuffled predefined dataset, measuring the time taken for the sort.
+
+    Parameters:
+        -table (list): Database table as a list
+        -MAX_RUNS (int, optional): Amount of times to run the sorting algorithm
+    Returns:
+        None
     """
 
     #SERVER = "192.168.1.9"

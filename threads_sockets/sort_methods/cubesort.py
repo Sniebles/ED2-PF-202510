@@ -1,4 +1,11 @@
-def cube_sort(data, key):
+def cube_sort(data: list, key: str):
+    """
+    Custom cube sort implementation for dictionary lists that splits input data into buckets according to the range each
+    item falls in and sorts them via insertion sort.
+    Parameters:
+        data (list): Dictionary list to sort
+        key (str): Key to sort dictionaries by
+    """
     if not data: 
         return
 

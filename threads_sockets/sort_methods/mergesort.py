@@ -1,4 +1,10 @@
-def mergesort(data, key):
+def mergesort(data: list, key: str):
+    """
+    Standard mergesort implementation that orders dictionary lists using the provided key argument
+    Parameters:
+        data (list): Dictionary list to sort
+        key (str): Key to sort dictionaries by
+    """
     if len(data) > 1:
         mid = len(data) // 2
         left_half = data[:mid]

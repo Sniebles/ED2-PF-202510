@@ -1,5 +1,10 @@
-
-def heapsort(data, key):
+def heapsort(data: list, key: str):
+    """
+    Heapsort implementation for dictionary lists using the provided key for comparisons
+    Parameters:
+        data (list): Dictionary list
+        key (str): Key to sort by
+    """
     n = len(data)
     for i in range(n // 2 - 1, -1, -1):
         heapify(data, n, i, key)
